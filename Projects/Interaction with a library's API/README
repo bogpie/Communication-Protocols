@@ -1,0 +1,90 @@
+TEMA 3 ¤ Piele Bogdan-Gabriel, 323CC
+
+_______________________________________________________________________________
+
+Observaţii generale
+
+Tema de faţă realizează, în C++, interacţiunea cu un API cu tematica unei
+librării, folosind pachetul nlohmann json. Autenticitatea unui utilizator este
+realizată folosind cookies şi JWT tokens.
+
+Programul se compilează cu make și se rulează cu ./client. Compilarea durează
+aproximativ 10 secunde.
+
+Am plecat de la codul din laboratorul 10 şi am decis folosirea predominantă a
+std string în detrimentul array-urilor de caractere. Motivul îl reprezintă
+uşurinţa în a lucra cu structuri predefinite ale C++. Am păstrat metodele din
+codul laboratorului referitoare la interacţiunea cu serverul, iar pentru a le
+putea folosi, am realizat conversii de la string la char*, şi reciproc.
+
+Răspunsurile de la server sunt afişate bref, astfel încât se pot observa codul
+de eroare, rezultatul success / error + descriere. De asemenea, în cazul
+primirii unui json de la server, se interpreteză datele.
+_______________________________________________________________________________
+
+_______________________________________________________________________________
+
+Secţiunile programului
+
+Proiectul este divizat în mai multe secțiuni (headere + surse)
+-	sursa principală
+-	helpers
+-	requests
+-	warnings
+-	user_interaction
+-	resposne_parsers
+-	queries
+
+
+Sursa principală, client.cpp, defineşte în primul rând parametrii necesari
+interacţiunii cu serverul (adresa IP a hostului, string-urile de mesaj şi
+comandă, cookies şi token ce sunt extrase automat, etc.). Apoi client-ul rămâne
+pornit până la citirea comenzii exit. În bucla de rulare a clientului se
+interpretează fiecare comandă, fiind lansate funcţii din secţiunea queries,
+amintită anteiror. Timeoutul este evitat prin redeschiderea conexiunii după
+fiecare nouă introducere de comandă.
+
+
+Secţiunea helpers conţine funcţiile de uz general, afişarea erorilor,
+construirea unui mesaj folosind separatoare, deschiderea conexiiunii,
+interacţiunea cu serverul.
+
+
+Requests defineșțe funcționalitatea cererilor de GET / POST / DELETE. Pentru a
+evita codul duplicat, am realizat GET și DELETE într-o singură funcție, cu un
+parametru definit de denumirea metodei respective.
+
+
+Pentru că am aflat din forum că trebuie să ne bazăm mereu pe răspunsul de la
+server, deci să nu hardcodăm situaţiile de eroare, am decis crearea unei
+secţiuni de warnings. Funcţiile prezentate doar afișează o avertizare pentru
+utilizator în cazul lipsei unor parametrii, dar nu opreşte cererea sa. Erorile
+vor fi extrase din mesajele trimise de server, evitându-se erorile locale.
+
+
+În secțiunea user_interaction sunt metode care realizează interacțiunea cu
+utilizatorul prin stdin, obținându-se userul și parola, respectiv informațiile
+unei cărți de adăugat.
+
+
+În response_parsers am realizat funcții pentru parsarea răspunsului de la
+server. Se folosesc utilitare ale string și stringstream. Acesta din urmă este
+utilizat pentru citirea codului dintr-un stream format din subșirul care succede
+datele referitoare la protocol și versiune. În plus, parsarea răspunsului constă
+în identificarea codului (200, 201, 403, ...), interpretarea sa și preluarea
+unui eventual obiect json (sau a unui vector de json, delimitat de []).
+
+În queries se află funcțiile apelate la interpretarea unei comenzi a
+utilizatorului. Pentru un cod mai succint, am decis ca acele comenzi denumite
+"get_book", "get_books", "delete_books" să corespundă unei singure funcții,
+tryBooksQuery. Motivul este că funcționalitatea request-urilor asociate acestora
+este asemănătoare. 
+
+Parametrul ce trebuie precizat în plus în antet, spre deosebire de celelalte
+funcții, este comanda. De acolo putem deduce tipul de metoda (GET / DELETE),
+respectiv dacă url-ul se finalizează cu precizarea unui id de carte.
+
+De menționat că funcțiile care modifică cookies, ori tokens folosesc parametrii
+transmiși prin referință, funcțiile returnând void. De asemenea, la logout se
+șterg atât cookie-ul cât și token-ul extrase anterior.
+_______________________________________________________________________________

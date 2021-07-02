@@ -1,0 +1,22 @@
+Tema de față simulează funcționalitatea unui router, implementând protocolul ARP, dirijarea folosind o tabelă
+de rutare parsată și suport pentru protcolul ICMP.
+Pentru a realiza cei 10 pași din bucla infinită a dispozitivului (evidențiati prin comentarii in cod), sunt 
+folosite și câteva structuri și funcții auxiliare, pe lângă cele date în schelet:
+-  RouteTableEntry  - 	intrarea într-o tabelă de rutare
+-  ArpTableEntry -	intrarea într-o tabelă ARP
+-  parse_route_table -  parsarea tabelei de rutare și găsirea numărului de intrări (ca parametru de referință)
+			Citirea este raelizată folosind fscanf, în loc de read, pentru a putea trece ușor peste
+			delimitatoarele dintre numere.
+-  get_best_route -	Găsirea celei mai bune rute pentru o adresă IP, căutându-se intrarea cea mai specifică
+			în care, aplicând și pe biți între adresa IP și masca se obține prefixul. Se parcurge
+			tabela liniar, returnându-se NULL în cazul în care nu se găsește nicio intrare.
+-  get_arp_entry -	Căutare liniară prin tabela ARP pentru MAC-ul corespunzător unei adrese IP.
+
+Problemele întâmpinate le-am depanat folosind printf-uri în diferite secțiuni ale codului, citind
+erorile din fișierele corespunzătoare și folosind comanda PING între stații. Spre exemplu, am observat 
+că algoritmul de get_best_route eșua pentru că, inițializând minimul de mască inițial cu -1, nu 0, compararea 
+pe unsigned considera acel -1 ca UNSIGNED_INT_MAX. Observând fișierul out, în care afișasem comparațiile,
+am depistat eroarea mea de raționament. 
+O altă problemă rezolvată a fost aplicarea deque pe o coadă goala, pe care am observat-o în fișierele err.
+O problemă pe care nu am putut să o rezolv este de ce unele teste forwardXY pică și altele nu.
+

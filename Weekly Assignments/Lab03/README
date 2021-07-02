@@ -1,0 +1,39 @@
+* PC, laborator4 *
+
+Rulare schelet de cod:
+	cd link_emulator
+	make
+	cd ..
+	make
+	./run_experiment
+
+Numărul de cadre trimise se poate modifica din lib.h - COUNT.
+Măsurare timp rulare: time ./run_experiment
+
+________________________________________________
+
+Bogdan Piele, Andra Țăpor
+
+Calcularea numărului de frame-uri se face având în vedere că unitățile de măsură
+sunt megabiți / secundă pentru viteză, milisecunde pentru delay și bytes pentru
+mesaj.
+
+Pentru exercițiul 3 vom trimite din send.c, fără a așțepta ack, un număr de w
+cadre. Urmează ca până la ajungerea la COUNT cadre să fie primit un ack, urmând
+apoi trimiterea următorului cadru. Ultimul pas este așteptarea ack-urilor
+rămase, care am observat că sunt în număr de w.
+
+Referitor la detectarea erorilor, se folosește structura my_payload, care
+conține paritatea calculată, respectiv conținutul mesajului, de lungime atâția
+octeți cât ne rămân (lungimea maximă - sizeof(int), am făcut paritatea de tip
+int). Se fac conversiile corespunzătoare în funcțiile send_message_helper,
+receive_message_helper. Paritatea este 1 dacă numărul de biți de 1 este impar, 0
+în caz contrar. Calculul parității se face prin parcurgerea bit cu bit a
+fiecărui caracter (byte), iar această iterație se ia pentru fiecare literă,
+luând în considerare paritatea calculată anterior.
+
+O observație importantă este că paritatea poate fi transmisă și ea eronat în
+cazul canalului non-ideal (CORRUPT nu este 0), fiindcă este, conform rezolvării,
+parte din payload.
+
+

@@ -1,0 +1,27 @@
+Laboratorul 4 - Bogdan Piele, Andra Țăpor
+
+Se primesc continuu pachete (get_packet), urmând să fie trimise, la rândul lor
+către noul intermediar, "next hop". Se extrag cele două headere, corespuzătoare
+Ethernet și IP.
+
+Se verifică integritatea pachetului, folosind funcția ip_checksum, iar la
+găsirea unei valori nenule în variabila rezultat, checkResult, se ignoră
+pachetul.
+
+Verificăm că valoarea time-to-leave este mai mare sau egală decât 1. 
+
+Folosind get_best_route, interogăm tabela de rutare pentru a afla unde vom
+trimite pachetul. Condiția ce trebuie respectată este ca aplicarea AND pe biți
+între ip-ul destinației și masca unei intrări în tabela de rutare să fie
+prefixul intrării. Vom alege acea rută în care masca are valoare maximă
+(bestMask). Dacă ruta nu este găsită, se poate face discard la pachet.
+
+Se actualizează TTL și se recalculează checksum-ul pentru header-ul de ip
+(pachetul a fost modificat).
+
+Se fac modificările corespunzătoare și la nivelul ethernet. Am folosit memcpy
+pentru că o simplă atribuire nu va funcționa, variabilele corespunzătoare fiind
+reprezentate ca vectori ( uint8_t  ether_dhost[ETH_ALEN] ).
+
+În final se redirecțîonează pachetul, interfața pe care îl trimitem fiind cea
+corespunzătoare rutei găsite anterior.
